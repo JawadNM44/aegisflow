@@ -1,3 +1,4 @@
+"""Documentation agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
 from app.agents.base import BaseAgent
 from app.models.schemas import AgentStatus, Incident, TimelineEvent
