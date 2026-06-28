@@ -1,3 +1,4 @@
+"""Pydantic data models for C4 architecture, incidents, and multi-agent system."""
 from __future__ import annotations
 from datetime import datetime
 from enum import Enum
