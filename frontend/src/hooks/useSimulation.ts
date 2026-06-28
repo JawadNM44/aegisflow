@@ -1,3 +1,5 @@
+/* useSimulation - AEGISFLOW frontend useSimulation for dashboard data management. */
+
 import { useState, useCallback } from 'react';
 
 type Action = 'kill' | 'restore' | 'deploy' | 'scale';
