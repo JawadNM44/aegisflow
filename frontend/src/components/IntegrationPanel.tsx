@@ -1,3 +1,5 @@
+/* IntegrationPanel component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React from 'react';
 import { Slack, Github, BookOpen } from 'lucide-react';
 
