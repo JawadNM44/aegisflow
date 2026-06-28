@@ -47,6 +47,7 @@ export function useWebSocket() {
 
   useEffect(() => {
     let reconnectTimer: ReturnType<typeof setTimeout>;
+    let pingTimer: ReturnType<typeof setInterval>;
     let isDestroyed = false;
 
     function connect() {
@@ -56,6 +57,12 @@ export function useWebSocket() {
 
       ws.onopen = () => {
         setConnected(true);
+        // Send keepalive ping every 15s to prevent WS timeout
+        pingTimer = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ action: "ping" }));
+          }
+        }, 15000);
       };
 
       ws.onmessage = (event) => {
@@ -102,6 +109,7 @@ export function useWebSocket() {
 
       ws.onclose = () => {
         setConnected(false);
+        clearInterval(pingTimer);
         wsRef.current = null;
         if (!isDestroyed) {
           reconnectTimer = setTimeout(connect, 3000);
@@ -116,6 +124,7 @@ export function useWebSocket() {
     return () => {
       isDestroyed = true;
       clearTimeout(reconnectTimer);
+      clearInterval(pingTimer);
       wsRef.current?.close();
     };
   }, []);
