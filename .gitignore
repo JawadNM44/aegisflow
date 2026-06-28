@@ -9,3 +9,7 @@ __pycache__/
 .venv/
 dist/
 build/
+.env.local
+.env.production
+.env.*
+
