@@ -1,6 +1,7 @@
 /* ArchitectureDiagram component - AEGISFLOW dashboard UI for infrastructure observability. */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { toPng } from 'html-to-image';
 import ReactFlow, {
   Node,
   Edge,
@@ -16,6 +17,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import type { C4Architecture } from '@/types';
+import { api } from '@/lib/api';
 
 const healthColors: Record<string, string> = {
   healthy: '#22c55e',
@@ -80,6 +82,26 @@ interface Props {
 export default function ArchitectureDiagram({ architecture }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const diagramRef = useRef<HTMLDivElement>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [analysisTime, setAnalysisTime] = useState<number | null>(null);
+
+  const handleAnalyze = useCallback(async () => {
+    if (!diagramRef.current) return;
+    setAnalyzing(true);
+    setAnalysis(null);
+    try {
+      const dataUrl = await toPng(diagramRef.current, { backgroundColor: '#030712' });
+      const base64 = dataUrl.split(',')[1];
+      const result = await api.analyzeDiagram(base64);
+      setAnalysis(result.analysis || 'No analysis returned');
+      setAnalysisTime(result.inference_time_ms ?? null);
+    } catch (e: any) {
+      setAnalysis(`Capture failed: ${e.message}`);
+    }
+    setAnalyzing(false);
+  }, []);
 
   useEffect(() => {
     if (!architecture || !architecture.nodes) return;
@@ -140,30 +162,74 @@ export default function ArchitectureDiagram({ architecture }: Props) {
   }
 
   return (
-    <div className="w-full h-full">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.15 }}
-        minZoom={0.3}
-        maxZoom={2.5}
-        className="bg-gray-950/50"
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background color="#1a2332" gap={24} size={1} />
-        <Controls className="!bg-gray-800 !border-gray-700 !text-white [&>button]:!border-gray-600 [&>button]:!bg-gray-800 [&>button]:hover:!bg-gray-700" />
-        <MiniMap
-          nodeStrokeColor="#4b5563"
-          nodeColor="#1f2937"
-          maskColor="rgba(0,0,0,0.7)"
-          className="!bg-gray-900 !border-gray-700 !rounded-lg"
-          style={{ width: 150, height: 100 }}
-        />
-      </ReactFlow>
+    <div className="w-full h-full flex">
+      <div ref={diagramRef} className="flex-1 relative">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.15 }}
+          minZoom={0.3}
+          maxZoom={2.5}
+          className="bg-gray-950/50"
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background color="#1a2332" gap={24} size={1} />
+          <Controls className="!bg-gray-800 !border-gray-700 !text-white [&>button]:!border-gray-600 [&>button]:!bg-gray-800 [&>button]:hover:!bg-gray-700" />
+          <MiniMap
+            nodeStrokeColor="#4b5563"
+            nodeColor="#1f2937"
+            maskColor="rgba(0,0,0,0.7)"
+            className="!bg-gray-900 !border-gray-700 !rounded-lg"
+            style={{ width: 150, height: 100 }}
+          />
+        </ReactFlow>
+        <button
+          onClick={handleAnalyze}
+          disabled={analyzing}
+          className={`absolute top-4 right-4 z-10 px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transition-all ${
+            analyzing
+              ? 'bg-gray-700 text-gray-400 cursor-wait'
+              : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500'
+          }`}
+        >
+          {analyzing ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Analyzing with Gemma 4...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              Analyze with Gemma 4
+            </span>
+          )}
+        </button>
+      </div>
+      {analysis && (
+        <div className="w-80 border-l border-gray-700 bg-gray-900/80 overflow-y-auto p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white">Gemma 4 Analysis</h3>
+            <button onClick={() => setAnalysis(null)} className="text-gray-500 hover:text-white transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          {analysisTime != null && (
+            <div className="text-xs text-indigo-400 mb-2">
+              Analyzed in {(analysisTime / 1000).toFixed(1)}s via Cerebras
+            </div>
+          )}
+          <div className="text-xs text-gray-300 leading-relaxed whitespace-pre-wrap">
+            {analysis}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

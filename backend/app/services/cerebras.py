@@ -274,5 +274,38 @@ Determine: severity, root cause, confidence, affected systems (as a flat array o
             logger.warning(f"Gemma 4 call failed: {e}")
             return None
 
+    def analyze_diagram(self, base64_image: str, prompt: str = "Analyze this infrastructure diagram.") -> dict | None:
+        """Send a diagram image to Gemma 4 for multimodal analysis."""
+        if self.simulation_mode or not self.api_key:
+            return None
+        try:
+            response = self.client.post(
+                f"{self.base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": self.model,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": prompt},
+                                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}},
+                            ],
+                        }
+                    ],
+                    "temperature": 0.1,
+                    "max_tokens": 2048,
+                },
+            )
+            data = response.json()
+            content = data["choices"][0]["message"]["content"]
+            time_info = data.get("time_info", {})
+            total_time = time_info.get("total_time", 0)
+            logger.info(f"Gemma 4 diagram analysis: {len(content)} chars in {total_time*1000:.0f}ms")
+            return {"analysis": content, "inference_time_ms": round(total_time * 1000, 1) if total_time else None}
+        except Exception as e:
+            logger.warning(f"Gemma 4 diagram analysis failed: {e}")
+            return None
+
 
 cerebras = CerebrasClient()

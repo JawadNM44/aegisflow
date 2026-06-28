@@ -151,6 +151,21 @@ async def integration_status():
     }
 
 
+# --- Multimodal Diagram Analysis ---
+
+class DiagramAnalysisRequest(BaseModel):
+    image: str
+    prompt: str = "Analyze this infrastructure architecture diagram. Identify potential issues, single points of failure, bottlenecks, and optimization opportunities. Describe what you see."
+
+
+@router.post("/analyze/diagram")
+async def analyze_diagram(req: DiagramAnalysisRequest):
+    result = cerebras.analyze_diagram(req.image, req.prompt)
+    if result:
+        return result
+    return {"analysis": "Diagram analysis unavailable (Gemma 4 API not reachable)", "inference_time_ms": None}
+
+
 # --- WebSocket ---
 
 @router.websocket("/ws")

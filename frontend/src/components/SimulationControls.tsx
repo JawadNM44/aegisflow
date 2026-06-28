@@ -21,23 +21,23 @@ export default function SimulationControls() {
   const runAction = useCallback(async (action: string, target: string, name: string) => {
     const key = `${action}-${target}`;
     setLoading(key);
-    addLog(`⏳ ${action} ${name}...`);
+    addLog(`Running ${action} on ${name}...`);
     try {
       if (action === 'kill') {
         const res = await api.simulateFailure(target);
-        addLog(res.success ? `💀 ${name} FAILURE - cascading impact` : `❌ Failed: ${res.error}`);
+        addLog(res.success ? `Injected ${name} failure — cascading impact detected` : `Failed: ${res.error}`);
       } else if (action === 'restore') {
         const res = await api.simulateRestore(target);
-        addLog(res.success ? `✅ ${name} restored to healthy` : `❌ Failed: ${res.error}`);
+        addLog(res.success ? `${name} restored to healthy` : `Failed: ${res.error}`);
       } else if (action === 'deploy') {
         const res = await api.simulateDeployment(target);
-        addLog(res.success ? `🚀 ${name} deployment triggered` : `❌ Failed: ${res.error}`);
+        addLog(res.success ? `${name} deployment triggered` : `Failed: ${res.error}`);
       } else if (action === 'scale') {
         const res = await api.simulateScaling(target, 5);
-        addLog(res.success ? `📈 ${name} scaled to 5 replicas` : `❌ Failed: ${res.error}`);
+        addLog(res.success ? `${name} scaled to 5 replicas` : `Failed: ${res.error}`);
       }
     } catch (e: any) {
-      addLog(`❌ Error: ${e.message}`);
+      addLog(`Error: ${e.message}`);
     }
     setLoading(null);
   }, []);
@@ -84,7 +84,7 @@ export default function SimulationControls() {
       <div className="mt-2 bg-gray-900/50 rounded-lg border border-gray-800 p-2 max-h-[140px] overflow-y-auto">
         {log.length === 0 && (
           <div className="text-xs text-gray-500 text-center py-3">
-            Click <Skull className="w-3 h-3 inline" /> Kill to inject failures
+            Click Kill to inject infrastructure failures
           </div>
         )}
         {log.map((msg, i) => (

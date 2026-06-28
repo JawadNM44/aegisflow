@@ -34,4 +34,10 @@ export const api = {
     fetchAPI(`/simulate/scaling?target=${encodeURIComponent(target)}&replicas=${replicas}`, { method: 'POST' }),
 
   getHealth: () => fetchAPI('/health'),
+
+  analyzeDiagram: (image: string, prompt?: string) =>
+    fetchAPI('/analyze/diagram', {
+      method: 'POST',
+      body: JSON.stringify({ image, prompt: prompt || 'Analyze this infrastructure architecture diagram. Identify potential issues, single points of failure, bottlenecks, and optimization opportunities.' }),
+    }),
 };
