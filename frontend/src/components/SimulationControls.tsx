@@ -1,3 +1,5 @@
+/* SimulationControls component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React, { useState, useCallback } from 'react';
 import { Zap, Skull, RefreshCw, Rocket, Gauge, Loader } from 'lucide-react';
 import { api } from '@/lib/api';
