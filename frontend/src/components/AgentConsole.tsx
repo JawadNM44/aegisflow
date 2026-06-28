@@ -1,3 +1,5 @@
+/* AgentConsole component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React from 'react';
 import { Bot, Activity, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import type { AgentInfo } from '@/types';
