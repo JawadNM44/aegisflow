@@ -3,6 +3,11 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
+"""AEGISFLOW: AI-native observability platform powered by Gemma 4 on Cerebras."""
+import asyncio
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -77,3 +82,4 @@ async def root():
         "docs": "/docs",
         "health": "/health",
     }
+
