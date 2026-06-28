@@ -1,3 +1,4 @@
+"""Multi-agent orchestration - coordinator for 11 specialist infrastructure agents."""
 from __future__ import annotations
 import asyncio
 from app.agents.base import BaseAgent
