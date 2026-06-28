@@ -87,5 +87,5 @@ Frontend (Next.js + React Flow)  ←→  WebSocket  ←→  Backend (FastAPI)  �
 | Diagram | React Flow |
 | AI | Gemma 4 (Cerebras API) |
 | Realtime | WebSockets |
-| State | In-memory / Redis |
+| State | In-memory |
 | Deployment | Docker Compose |
