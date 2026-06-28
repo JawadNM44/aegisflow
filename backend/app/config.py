@@ -1,3 +1,4 @@
+"""Configuration management with Pydantic Settings and environment loading."""
 from pydantic_settings import BaseSettings
 from typing import Optional
 
