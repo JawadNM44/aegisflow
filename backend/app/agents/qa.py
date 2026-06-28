@@ -7,6 +7,7 @@ from app.agents.base import BaseAgent
 from app.models.schemas import AgentStatus, HealthStatus
 from app.services.state import state
 from app.services.websocket_manager import ws_manager
+from app.services.cerebras import cerebras
 
 
 class QAAgent(BaseAgent):
@@ -39,6 +40,16 @@ class QAAgent(BaseAgent):
             if nid not in connected_nodes:
                 orphans.append(arch.nodes[nid].name)
 
+        gemma_result = cerebras.ask_gemma(
+            "You are a QA validation analyst. Output JSON with 'summary' (1-2 sentence assessment) and 'recommendations' (array of strings).",
+            f"""Assess this infrastructure state:
+Total Nodes: {len(arch.nodes)}
+Total Edges: {len(arch.edges)}
+Healthy: {sum(1 for n in arch.nodes.values() if n.health == HealthStatus.HEALTHY)}
+Issues Found: {len(issues)} {'- ' + '; '.join(issues) if issues else 'None'}
+Orphaned Nodes: {len(orphans)} {'- ' + ', '.join(orphans) if orphans else 'None'}""",
+        )
+
         report = {
             "total_nodes": len(arch.nodes),
             "total_edges": len(arch.edges),
@@ -46,6 +57,11 @@ class QAAgent(BaseAgent):
             "orphans": orphans,
             "healthy": sum(1 for n in arch.nodes.values() if n.health == HealthStatus.HEALTHY),
         }
+
+        if gemma_result:
+            report["gemma_summary"] = gemma_result.get("summary", "")
+            report["gemma_recommendations"] = gemma_result.get("recommendations", [])
+            await self.log("info", f"Gemma 4 QA: {gemma_result.get('summary', '')[:100]}")
 
         if issues:
             await self.log("warning", f"Integrity issues: {len(issues)} problems found", report)

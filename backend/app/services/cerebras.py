@@ -248,4 +248,31 @@ Determine: severity, root cause, confidence, affected systems (as a flat array o
         )
 
 
+    def ask_gemma(self, system_prompt: str, user_prompt: str, max_tokens: int = 1024) -> dict | None:
+        """Generic Gemma 4 call for any agent. Returns parsed JSON or None."""
+        if self.simulation_mode or not self.api_key:
+            return None
+        try:
+            response = self.client.post(
+                f"{self.base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": self.model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.1,
+                    "max_tokens": max_tokens,
+                },
+            )
+            data = response.json()
+            content = data["choices"][0]["message"]["content"]
+            return json.loads(content)
+        except Exception as e:
+            logger.warning(f"Gemma 4 call failed: {e}")
+            return None
+
+
 cerebras = CerebrasClient()
