@@ -1,5 +1,7 @@
-"""Root_Cause agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
+
+"""Root_Cause agent - specialized infrastructure analysis for AEGISFLOW."""
+
 import asyncio
 from app.agents.base import BaseAgent
 from app.models.schemas import AgentStatus, IncidentStatus, TimelineEvent, InfrastructureEvent

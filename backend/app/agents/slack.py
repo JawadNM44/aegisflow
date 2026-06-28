@@ -1,5 +1,7 @@
-"""Slack agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
+
+"""Slack agent - specialized infrastructure analysis for AEGISFLOW."""
+
 import json
 from datetime import datetime
 

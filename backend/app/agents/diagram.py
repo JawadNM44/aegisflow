@@ -1,5 +1,7 @@
-"""Diagram agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
+
+"""Diagram agent - specialized infrastructure analysis for AEGISFLOW."""
+
 import asyncio
 import random
 from datetime import datetime

@@ -1,5 +1,7 @@
-"""Abstract base class for all AEGISFLOW agents with lifecycle and error handling."""
 from __future__ import annotations
+
+"""Abstract base class for all AEGISFLOW agents with lifecycle and error handling."""
+
 import asyncio
 from abc import ABC, abstractmethod
 from typing import Optional

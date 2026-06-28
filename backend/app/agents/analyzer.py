@@ -1,5 +1,7 @@
-"""Analyzer agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
+
+"""Analyzer agent - specialized infrastructure analysis for AEGISFLOW."""
+
 import asyncio
 import json
 from datetime import datetime

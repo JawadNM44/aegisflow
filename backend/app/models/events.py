@@ -1,5 +1,7 @@
-"""Event-driven architecture for infrastructure observability events."""
 from __future__ import annotations
+
+"""Event-driven architecture for infrastructure observability events."""
+
 import asyncio
 import uuid
 from datetime import datetime

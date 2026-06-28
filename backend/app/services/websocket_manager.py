@@ -1,5 +1,7 @@
-"""websocket_manager service - infrastructure management for AEGISFLOW observability."""
 from __future__ import annotations
+
+"""websocket_manager service - infrastructure management for AEGISFLOW observability."""
+
 import asyncio
 import json
 from typing import Any

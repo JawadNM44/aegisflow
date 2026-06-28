@@ -1,6 +1,5 @@
-"""state service - infrastructure management for AEGISFLOW observability."""
-"""In-memory state store for architecture, incidents, and agents."""
 from __future__ import annotations
+"""In-memory state store for architecture, incidents, and agents."""
 import uuid
 from datetime import datetime
 from typing import Optional

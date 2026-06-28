@@ -1,5 +1,7 @@
-"""cerebras service - infrastructure management for AEGISFLOW observability."""
 from __future__ import annotations
+
+"""cerebras service - infrastructure management for AEGISFLOW observability."""
+
 import json
 import re
 from typing import Optional, Any

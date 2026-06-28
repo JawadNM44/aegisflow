@@ -1,5 +1,7 @@
-"""Planner agent - dispatches analysis tasks to 10 specialist agents."""
 from __future__ import annotations
+
+"""Planner agent - dispatches analysis tasks to 10 specialist agents."""
+
 import asyncio
 import json
 from typing import Optional

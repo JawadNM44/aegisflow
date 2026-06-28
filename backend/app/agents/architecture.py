@@ -1,5 +1,7 @@
-"""Architecture agent - specialized infrastructure analysis for AEGISFLOW."""
 from __future__ import annotations
+
+"""Architecture agent - specialized infrastructure analysis for AEGISFLOW."""
+
 import asyncio
 from app.agents.base import BaseAgent
 from app.models.schemas import AgentStatus
