@@ -93,22 +93,24 @@ class AnalyzerAgent(BaseAgent):
         jira_agent = agent_orch.agents.get("Jira")
         notion_agent = agent_orch.agents.get("Notion")
 
+        # Diagram must apply visual state changes first
         if diagram_agent:
             await diagram_agent.apply_analysis(analysis)
 
-        if analysis.severity in ("sev1", "sev2") and root_cause_agent:
-            await root_cause_agent.investigate(event)
-
+        # All downstream agents dispatch in parallel for true multi-agent coordination
+        parallel_tasks = []
         if slack_agent:
-            await slack_agent.notify(incident)
-
+            parallel_tasks.append(slack_agent.notify(incident))
         if jira_agent:
-            await jira_agent.create_ticket(incident)
-
+            parallel_tasks.append(jira_agent.create_ticket(incident))
         if doc_agent:
-            await doc_agent.create_report(incident)
-
+            parallel_tasks.append(doc_agent.create_report(incident))
         if notion_agent and analysis.severity in ("sev1",):
-            await notion_agent.update_page(incident)
+            parallel_tasks.append(notion_agent.update_page(incident))
+        if analysis.severity in ("sev1", "sev2") and root_cause_agent:
+            parallel_tasks.append(root_cause_agent.investigate(event))
+
+        if parallel_tasks:
+            await asyncio.gather(*parallel_tasks)
 
         await self.set_status(AgentStatus.IDLE)
