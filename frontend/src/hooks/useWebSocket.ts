@@ -76,9 +76,6 @@ export function useWebSocket() {
           if (type === 'architecture' && msg.data) {
             setArchitecture(msg.data);
           }
-          if (type === 'architecture') {
-            setArchitecture(msg as any);
-          }
           if (type === 'incidents' && msg.incidents) {
             setIncidents(msg.incidents);
           }
