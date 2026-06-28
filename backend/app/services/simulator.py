@@ -1,3 +1,4 @@
+"""simulator service - infrastructure management for AEGISFLOW observability."""
 from __future__ import annotations
 import asyncio
 import uuid
