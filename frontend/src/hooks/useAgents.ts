@@ -1,3 +1,5 @@
+/* useAgents - AEGISFLOW frontend useAgents for dashboard data management. */
+
 import { useState, useEffect, useCallback } from 'react';
 import type { AgentInfo } from '@/types';
 
