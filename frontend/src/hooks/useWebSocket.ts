@@ -1,3 +1,5 @@
+/* useWebSocket - AEGISFLOW frontend useWebSocket for dashboard data management. */
+
 import { useEffect, useRef, useCallback, useState } from 'react';
 import type { WSMessage, C4Architecture, Incident } from '@/types';
 import { api } from '@/lib/api';
