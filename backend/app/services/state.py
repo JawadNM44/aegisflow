@@ -1,12 +1,12 @@
+"""In-memory state store for architecture, incidents, and agents."""
 from __future__ import annotations
-import json
 import uuid
 from datetime import datetime
 from typing import Optional
 from collections import defaultdict
 
 from app.models.schemas import (
-    C4Architecture, C4Node, C4Edge, C4Node,
+    C4Architecture, C4Node, C4Edge,
     InfrastructureEvent, Incident, GemmaAnalysis,
     AgentInfo, AgentStatus, AgentLog, HealthStatus, NodeType, EdgeType
 )
@@ -14,6 +14,7 @@ from app.config import settings
 
 
 class StateStore:
+    """Singleton state store with thread-safe access patterns."""
     _instance: StateStore | None = None
 
     def __new__(cls):
@@ -78,8 +79,11 @@ class StateStore:
         for eid, src, tgt, etype in edge_defs:
             edges[eid] = C4Edge(id=eid, source=src, target=tgt, type=etype)
 
-        self.architecture = C4Architecture(nodes=nodes, edges=edges, version=1,
-                                            last_updated=datetime.utcnow().isoformat())
+        self.architecture = C4Architecture(
+            nodes=nodes, edges=edges,
+            version=1,
+            last_updated=datetime.utcnow().isoformat(),
+        )
 
     async def get_architecture(self) -> C4Architecture:
         return self.architecture
@@ -103,7 +107,11 @@ class StateStore:
         return self.incidents.get(incident_id)
 
     async def get_incidents(self, limit: int = 20) -> list[Incident]:
-        return sorted(self.incidents.values(), key=lambda i: i.created_at, reverse=True)[:limit]
+        return sorted(
+            self.incidents.values(),
+            key=lambda i: i.created_at,
+            reverse=True,
+        )[:limit]
 
     async def update_incident(self, incident: Incident):
         self.incidents[incident.id] = incident
@@ -128,7 +136,9 @@ class StateStore:
     async def agent_log(self, name: str, level: str, message: str, details: dict | None = None):
         if name not in self.agents:
             self.agents[name] = AgentInfo(name=name)
-        self.agents[name].logs.append(AgentLog(level=level, message=message, details=details or {}))
+        self.agents[name].logs.append(
+            AgentLog(level=level, message=message, details=details or {})
+        )
         self.agents[name].last_active = datetime.utcnow().isoformat()
         if len(self.agents[name].logs) > 100:
             self.agents[name].logs = self.agents[name].logs[-50:]
