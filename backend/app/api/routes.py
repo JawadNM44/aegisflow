@@ -19,6 +19,21 @@ from app.services.cerebras import cerebras
 router = APIRouter(prefix="/api/v1")
 
 
+# --- Health ---
+
+@router.get("/health")
+async def api_health():
+    arch = await state.get_architecture()
+    return {
+        "status": "ok",
+        "app": "AEGISFLOW",
+        "cerebras": "live" if not cerebras.simulation_mode else "simulated",
+        "nodes": len(arch.nodes),
+        "edges": len(arch.edges),
+        "agents": len([a for a in await state.get_agents()]),
+    }
+
+
 # --- Architecture ---
 
 @router.get("/architecture")
