@@ -1,3 +1,5 @@
+/* useIncidents - AEGISFLOW frontend useIncidents for dashboard data management. */
+
 import { useState, useEffect, useCallback } from 'react';
 import type { Incident } from '@/types';
 
