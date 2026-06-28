@@ -21,6 +21,7 @@ export function useWebSocket() {
     return () => listenersRef.current.get(type)?.delete(cb);
   }, []);
 
+  // Initial data load
   useEffect(() => {
     if (initializedRef.current) return;
 
@@ -33,6 +34,15 @@ export function useWebSocket() {
     }).catch(() => {});
 
     initializedRef.current = true;
+  }, []);
+
+  // Poll for data every 3s as fallback (catches WS gaps)
+  useEffect(() => {
+    const poll = setInterval(() => {
+      api.getArchitecture().then(setArchitecture).catch(() => {});
+      api.getIncidents().then(setIncidents).catch(() => {});
+    }, 3000);
+    return () => clearInterval(poll);
   }, []);
 
   useEffect(() => {

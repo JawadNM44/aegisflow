@@ -23,13 +23,12 @@ export default function Dashboard() {
   useEffect(() => {
     function refresh() {
       api.getAgents().then(setAgents).catch(() => {});
-      api.getIncidents().catch(() => {});
       api.getHealth().then(h => {
         if (h.cerebras_speed_ms) setCerebrasSpeed(h.cerebras_speed_ms);
       }).catch(() => {});
     }
     refresh();
-    const interval = setInterval(refresh, 5000);
+    const interval = setInterval(refresh, 3000);
     return () => clearInterval(interval);
   }, []);
 
