@@ -1,3 +1,5 @@
+/* ArchitectureDiagram component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React, { useEffect } from 'react';
 import ReactFlow, {
   Node,
