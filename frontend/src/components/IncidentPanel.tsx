@@ -1,3 +1,5 @@
+/* IncidentPanel component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React from 'react';
 import { AlertTriangle, CheckCircle, Clock, UserCheck, Activity, Zap } from 'lucide-react';
 import type { Incident } from '@/types';
