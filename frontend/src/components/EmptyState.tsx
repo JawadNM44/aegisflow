@@ -1,3 +1,5 @@
+/* EmptyState component - AEGISFLOW dashboard UI for infrastructure observability. */
+
 import React from 'react';
 
 interface Props {
