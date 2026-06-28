@@ -28,6 +28,7 @@ async def api_health():
         "status": "ok",
         "app": "AEGISFLOW",
         "cerebras": "live" if not cerebras.simulation_mode else "simulated",
+        "cerebras_speed_ms": cerebras.last_inference_ms or None,
         "nodes": len(arch.nodes),
         "edges": len(arch.edges),
         "agents": len([a for a in await state.get_agents()]),

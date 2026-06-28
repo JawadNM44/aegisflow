@@ -59,17 +59,17 @@ export default function IncidentPanel({ incidents }: Props) {
                 <div className="mt-2 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-cyan-400">
                     <Zap className="w-3 h-3" />
-                    <span>Confidence: {(inc.ai_analysis.confidence * 100).toFixed(0)}%</span>
+                    <span>{(inc.ai_analysis.confidence * 100).toFixed(0)}% confidence</span>
                     {inc.ai_analysis.inference_time_ms && (
-                      <span className="text-gray-500 ml-1">
-                        | Cerebras: {inc.ai_analysis.inference_time_ms.toFixed(0)}ms
+                      <span className="ml-1 px-1.5 py-0.5 rounded bg-indigo-900/40 text-indigo-300 text-[10px] font-semibold">
+                        {inc.ai_analysis.inference_time_ms.toFixed(0)}ms
                       </span>
                     )}
                   </div>
                   {inc.ai_analysis.reasoning_trace && inc.ai_analysis.reasoning_trace.length > 0 && (
-                    <div className="text-[10px] text-gray-600 leading-relaxed border-l border-gray-700 pl-2">
-                      {inc.ai_analysis.reasoning_trace.slice(0, 3).map((step, i) => (
-                        <div key={i}>{step}</div>
+                    <div className="text-[10px] text-gray-500 leading-relaxed border-l border-gray-700 pl-2 mt-1 space-y-0.5">
+                      {inc.ai_analysis.reasoning_trace.map((step, i) => (
+                        <div key={i} className="hover:text-gray-300 transition-colors">{step}</div>
                       ))}
                     </div>
                   )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Shield, Activity, Bot, Bell, Radio, Gauge, Box, Loader } from 'lucide-react';
+import { Shield, Activity, Bot, Bell, Radio, Gauge, Box, Loader, Zap } from 'lucide-react';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { api } from '@/lib/api';
 import IncidentPanel from '@/components/IncidentPanel';
@@ -18,11 +18,15 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('incidents');
   const [agents, setAgents] = useState<AgentInfo[]>([]);
   const [integrationStatuses, setIntegrationStatuses] = useState({});
+  const [cerebrasSpeed, setCerebrasSpeed] = useState<number | null>(null);
 
   useEffect(() => {
     function refresh() {
       api.getAgents().then(setAgents).catch(() => {});
       api.getIncidents().catch(() => {});
+      api.getHealth().then(h => {
+        if (h.cerebras_speed_ms) setCerebrasSpeed(h.cerebras_speed_ms);
+      }).catch(() => {});
     }
     refresh();
     const interval = setInterval(refresh, 5000);
@@ -83,6 +87,13 @@ export default function Dashboard() {
           )}
         </div>
         <div className="flex-1" />
+        {cerebrasSpeed != null && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-900/40 border border-indigo-700/40 text-indigo-300 mr-3">
+            <Zap className="w-3 h-3 text-indigo-400" />
+            <span className="text-xs font-semibold">{cerebrasSpeed.toFixed(0)}ms</span>
+            <span className="text-[10px] text-indigo-500">via Cerebras</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400' : 'bg-red-400'} transition-colors`} />
           <span className="text-xs text-gray-400">{connected ? 'Live' : 'Connecting...'}</span>

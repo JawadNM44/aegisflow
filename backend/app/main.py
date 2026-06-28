@@ -67,6 +67,7 @@ async def health():
         "status": "ok",
         "app": settings.app_name,
         "cerebras": "simulated" if not settings.cerebras_api_key else "live",
+        "cerebras_speed_ms": cerebras.last_inference_ms or None,
         "nodes": len(arch.nodes),
         "edges": len(arch.edges),
         "agents": len([a for a in await state.get_agents()]),
