@@ -1,3 +1,5 @@
+/* useArchitecture - AEGISFLOW frontend useArchitecture for dashboard data management. */
+
 import { useState, useEffect } from 'react';
 import type { C4Architecture } from '@/types';
 
